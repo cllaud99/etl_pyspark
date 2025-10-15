@@ -1,0 +1,61 @@
+attributes:
+  destiny:
+    file_path: ./data/output/dados_medicos.json
+    file_type: json
+    options:
+      encoding: utf-8
+      mode: append
+      sep: ''
+  enrichment:
+    date_diff_years:
+    - column: IDADE_ATUAL
+      start_date: DATANASCIMENTO
+  partitioning:
+    num_particoes: null
+    particionar_por: DATA_PROCESSAMENTO
+  quality:
+    coluna_chave: PRONTUARIO
+    validacoes_faixa:
+    - coluna: TEMPERATURA
+      max: 42.0
+      min: 35.0
+    - coluna: ALTURA
+      max: 250.0
+      min: 50.0
+    - coluna: PESO
+      max: 300.0
+      min: 20.0
+    - coluna: SATURACAOOXIGENIO
+      max: 100.0
+      min: 70.0
+  source:
+    file_path: ./data/raw/dados_medicos_*.csv
+    file_type: csv
+    options:
+      delimiter: ','
+      encoding: utf-8
+      header: 'true'
+  transformations:
+    normalize_date:
+    - column: DATANASCIMENTO
+      fmt: dd/mm/yyyy
+    normalize_text:
+    - NOME
+    split_columns:
+    - column: PRESSAOARTERIAL
+      new_columns:
+      - PRESSAO_SISTOLICA
+      - PRESSAO_DIASTOLICA
+      pattern: /
+  type_conversion:
+    double_columns:
+    - TEMPERATURA
+    - ALTURA
+    - PESO
+    - SATURACAOOXIGENIO
+
+  processing:
+    remove_duplicates: true
+    duplicate_key: "PRONTUARIO"
+    move_processed_files: true
+    processed_folder: ./data/processed/
